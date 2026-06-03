@@ -1,0 +1,149 @@
+:root {
+            --bg-gradient: linear-gradient(180deg, #b7e4d9 0%, #fefbe0 100%);
+            --sidebar-bg: #e1f1ee;
+            --text-gold: #c5a043;
+            --button-teal: #1cb9d0;
+            --dark-text: #333;
+            --sidebar-width: 280px;
+        }
+
+.calendar-header {
+    display: flex;
+    justify-content: center;  /* center the whole row */
+    align-items: center;      /* vertically align items */
+    gap: 10px;                /* space between buttons and month */
+    margin-bottom: 15px;
+}
+
+.calendar-header h3 {
+    margin: 0;                /* remove default margins */
+    font-size: 1.2rem;
+}
+
+.month-btn {
+    font-size: 1.2rem;
+    padding: 5px 10px;
+    cursor: pointer;
+}
+
+.month-btn:hover{
+background:#f4acb7;
+}
+
+        body { margin: 0; font-family: 'Segoe UI', sans-serif; background: var(--bg-gradient); min-height: 100vh; display: flex; flex-direction: column; color: var(--dark-text); overflow-x: hidden; }
+
+        /* --- Header --- */
+        header { display: flex; justify-content: space-between; align-items: center; padding: 15px 40px; height: 80px; z-index: 20; position:sticky;  top: 0; }
+        .brand { display: flex; align-items: center; gap: 15px; }
+        .logo-circle { height: 85px; width: 85px; border-radius: 50%; background: white; display: flex; align-items: center; justify-content: center; box-shadow: 0 4px 8px rgba(0,0,0,0.1); overflow: hidden; border: 2px solid white; }
+        .logo-circle img { width: 100%; height: 100%; object-fit: cover; }
+        .clinic-title { color: var(--text-gold); font-size: 2.6rem; font-weight: bold; line-height: 0.8; }
+        .clinic-title span { display: block; font-size: 1rem; letter-spacing: 2px; text-transform: uppercase; border-top: 1px solid var(--text-gold); padding-top: 3px; margin-top: 3px; }
+        nav a { margin-left: 25px; text-decoration: none; color: var(--text-gold); font-weight: bold; font-size: 1.2rem; }
+
+        /* --- Sidebar --- */
+        aside { position: fixed; left: 0; top: 110px; background-color: var(--sidebar-bg); width: var(--sidebar-width); height: calc(100vh - 110px); border-radius: 0 40px 40px 0; box-shadow: 5px 0 15px rgba(0,0,0,0.05); z-index: 10; padding-top: 10px; }
+        h2 { font-weight: 500; font-size: 2.2rem; margin: 0 0 12px 0; }
+        .user-section { display: flex; align-items: center; justify-content: space-between; padding: 0 25px 20px; border-bottom: 2px solid rgba(0,0,0,0.08); margin-bottom: 20px; }
+        .user-name { font-weight: 700; font-size: 1.1rem; }
+        .avatar-circle { width: 45px; height: 45px; border-radius: 50%; background: #4a789c; display: flex; align-items: center; justify-content: center; color: white; font-size: 1.6rem; }
+        
+        /* Navigation Links Fix */
+        .nav-item { display: flex; align-items: center; padding: 20px 30px; gap: 15px; font-weight: 600; cursor: pointer; text-decoration: none; color: inherit; }
+        .nav-item.active { background: rgba(255,255,255,0.3); font-weight: 800; text-decoration: none; }
+        .nav-item:hover { background: rgba(255, 255, 255, 0.5); }
+
+        /* --- Content Area --- */
+        .main-content-area { flex: 1; display: flex; justify-content: center; align-items: center; margin-left: var(--sidebar-width); padding: 40px; }
+        main { background: white; width: 100%; max-width: 950px; padding: 50px 70px; border-radius: 20px; box-shadow: 0 15px 40px rgba(0,0,0,0.08); }
+
+        .stepper-head { display: flex; justify-content: space-between; margin-bottom: 30px; border-bottom: 3px solid #f2f2f2; padding-bottom: 15px; }
+        .stepper-head span { color: var(--text-gold); font-weight: 800; font-size: 1.2rem; opacity: 0.3; }
+        .stepper-head .active { opacity: 1; text-decoration: underline; }
+
+        .booking-grid { display: grid; grid-template-columns: 1.4fr 1fr; gap: 30px; }
+        .calendar { width: 100%; border-collapse: collapse; }
+        .calendar th { background: #b7e4d9; padding: 12px; border: 1px solid #ddd; }
+        .calendar td { border: 1px solid #ddd; height: 55px; text-align: center; cursor: pointer; transition: 0.2s; }
+        .calendar td:hover { background: #f0fdf4; }
+        .calendar td.selected { background: #a3e635 !important; font-weight: bold; }
+
+        .time-box { background: #f4fbf9; padding: 20px; border-radius: 15px; border: 1px solid #eee; text-align: center; }
+        .time-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-top: 20px; }
+        .time-btn, .ampm-btn { background: #e0e0e0; border: none; padding: 12px; border-radius: 25px; font-weight: bold; cursor: pointer; }
+        .selected { background: #a3e635 !important; box-shadow: 0 4px 6px rgba(0,0,0,0.1); }
+
+      .footer-action {
+    display: flex;
+    justify-content: space-between;
+    width: 100%;
+}
+
+.footer-action .btn:first-child {
+    margin-right: auto;
+}
+
+.footer-action .btn:last-child {
+    margin-left: auto;
+}
+
+        .btn:hover { transform: scale(1.05); filter: brightness(1.1); }
+		.btn { padding: 14px 60px; border-radius: 30px; font-weight: bold; font-size: 1.3rem; cursor: pointer; border: none; text-decoration: none; color: white; background: var(--button-teal); display: inline-block; }
+
+        .calendar-box {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+/* Make sure header is clearly above */
+.calendar-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0 10px;
+}
+
+.calendar-header h3 {
+    flex: 1;
+    text-align: center;
+    margin: 0;
+}
+
+/* Optional: make buttons cleaner */
+.calendar-header button {
+    background: #e0e0e0;
+    border: none;
+    padding: 6px 10px;
+    border-radius: 6px;
+    cursor: pointer;
+}
+
+.calendar-header button:hover {
+    background: #cfd8dc;
+}
+
+.calendar {
+    width: 100%;
+    border-collapse: collapse;
+    min-height: 380px;
+}
+
+.calendar td {
+    height: 55px;
+}
+.error-message {
+    display: none;
+    background: #ffe5e5;
+    color: #d8000c;
+    padding: 12px;
+    border-radius: 8px;
+    margin-bottom: 15px;
+    text-align: center;
+    font-weight: 600;
+    border: 1px solid #ffb3b3;
+}
+
+#step2Form {
+    grid-column: 1 / -1; /* span full width of grid */
+}

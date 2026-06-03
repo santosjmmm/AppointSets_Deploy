@@ -1,0 +1,352 @@
+/* ===================== ROOT ===================== */
+:root {
+    --bg-gradient: linear-gradient(180deg, #b7e4d9 0%, #fefbe0 100%);
+    --text-gold: #c5a043;
+    --dark-text: #333;
+    --price-teal: #2a7a6e;
+    --button-blue: #1cb9d0;
+    --available-green: #28a745;
+    --unavailable-red: #dc3545;
+    --card-bg: #f9fbfb;
+    --border-color: #e0e0e0;
+}
+
+/* ===================== GLOBAL ===================== */
+body {
+    margin: 0;
+    font-family: 'Segoe UI', sans-serif;
+    background: var(--bg-gradient);
+    min-height: 100vh;
+    color: var(--dark-text);
+    height: 100%;
+    overflow: hidden; 
+}
+
+.error-box {
+    background-color: #ffdddd;
+    color: #a10000;
+    border: 1px solid #ff5c5c;
+    padding: 12px;
+    margin-bottom: 15px;
+    border-radius: 8px;
+    text-align: center;
+    font-weight: bold;
+}
+
+/* ===================== HEADER ===================== */
+    header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+
+    padding: 0 30px;
+    height: 80px;
+
+    position: fixed;
+    top: 10px;
+    left: 0;
+    width: 100%;
+
+    box-sizing: border-box; /* 🔥 important */
+}
+
+footer {
+    background: var(--card-bg);
+    text-align: center;
+    padding: 15px 20px;
+    font-size: 0.9rem;
+    color: var(--dark-text);
+    border-top: 1px solid var(--border-color);
+    border-radius: 0 0 20px 20px;
+    box-shadow: 0 -4px 10px rgba(0, 0, 0, 0.05);
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    z-index: 10;
+}
+
+.footer-content {
+    max-width: 950px;
+    margin: 0 auto;
+}
+.brand {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+
+    max-width: 60%;
+    overflow: hidden;
+}
+
+.logo-circle {
+    height: 85px;
+    width: 85px;
+    border-radius: 50%;
+    background: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+    border: 2px solid white;
+    overflow: hidden;
+}
+
+.logo-circle img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.clinic-title {
+    color: var(--text-gold);
+    font-size: 2.6rem;
+    font-weight: bold;
+    line-height: 0.8;
+}
+
+.clinic-title span {
+    display: block;
+    font-size: 1rem;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    border-top: 1px solid var(--text-gold);
+    padding-top: 3px;
+}
+
+nav a {
+    margin-left: 25px;
+    text-decoration: none;
+    color: var(--text-gold);
+    font-weight: bold;
+    font-size: 1.1rem;
+}
+
+/* ===================== LAYOUT ===================== */
+.main-content-area {
+    display: flex;
+    justify-content: center;
+    padding: 40px 20px;
+    margin-top: 70px;
+}
+.scroll-container {
+  flex: 1;
+  overflow-y: auto;
+  padding-right: 10px;
+  margin-bottom: 10px; /* space from footer */
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+main {
+    width: 100%;
+    max-width: 950px;
+    background: white;
+    border-radius: 20px;
+    padding: 30px 30px 60px 30px; /* reduced bottom padding */
+
+    height: calc(80vh - 120px); /* smaller height */
+    overflow-y: auto;
+
+    display: flex;
+    flex-direction: column;
+
+    box-shadow: 0 10px 30px rgba(0,0,0,0.08);
+}
+
+/* ===================== SERVICES ===================== */
+.services-container h1 {
+    font-size: 2.5rem;
+    text-align: center;
+    margin-bottom: 40px;
+    flex-shrink: 0;
+}
+
+.services-list {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+.service-item {
+    display: flex;
+    align-items: center;
+    background: var(--card-bg);
+    border-radius: 15px;
+    overflow: hidden;
+    border: 1px solid var(--border-color);
+}
+
+/* UNAVAILABLE CARD STYLE */
+.service-item.unavailable {
+    border: 2px solid var(--unavailable-red);
+    opacity: 0.7;
+}
+
+.service-item.unavailable h3,
+.service-item.unavailable p {
+    color: #999;
+}
+
+/* ===================== IMAGE ===================== */
+.service-image {
+    width: 180px;
+    height: 135px;
+    background-color: #eee;
+    background-size: cover;
+    background-position: center;
+    flex-shrink: 0;
+    cursor: pointer;
+    position: relative;
+}
+
+.service-image:hover::after {
+    content: "Change Image";
+    position: absolute;
+    background: rgba(0,0,0,0.5);
+    color: white;
+    font-size: 0.7rem;
+    width: 100%;
+    bottom: 0;
+    text-align: center;
+    padding: 2px 0;
+}
+
+/* ===================== DETAILS ===================== */
+.service-details {
+    padding: 20px;
+    flex-grow: 1;
+    display: flex;
+    align-items: center;
+}
+
+.service-info h3 {
+    margin: 0 0 5px;
+    text-transform: uppercase;
+    font-size: 1.2rem;
+}
+
+.service-info p {
+    margin: 0 0 10px;
+    color: #666;
+    font-size: 0.9rem;
+    line-height: 1.4;
+}
+
+.service-price {
+    font-size: 1.1rem;
+    font-weight: bold;
+    color: var(--price-teal);
+}
+
+/* ===================== BUTTONS ===================== */
+.btn-group {
+    display: flex;
+    gap: 10px;
+    margin-left: auto;
+}
+
+/* 🔵 EDIT BUTTON (BLUE ONLY) */
+.book-btn {
+    background-color: var(--button-blue);
+    color: white;
+    border: none;
+    padding: 10px 22px;
+    border-radius: 40px;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+.book-btn:hover {
+    opacity: 0.9;
+}
+
+/* 🟢 AVAILABLE */
+.available-btn {
+    background-color: var(--available-green);
+    color: white;
+    border: none;
+    padding: 10px 22px;
+    border-radius: 40px;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+/* 🔴 UNAVAILABLE */
+.unavailable-btn {
+    background-color: var(--unavailable-red);
+    color: white;
+    border: none;
+    padding: 10px 22px;
+    border-radius: 40px;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+/* ===================== ADD BUTTON ===================== */
+.add-service-wrapper {
+    text-align: right;
+    margin-top: 40px;
+}
+
+.add-btn {
+    background-color: #7ba299;
+    color: white;
+    border: none;
+    padding: 15px 35px;
+    border-radius: 40px;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+/* ===================== INPUT ===================== */
+input[type="text"], textarea {
+    width: 100%;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    padding: 5px;
+    font-family: inherit;
+    margin-bottom: 5px;
+}
+
+.file-input {
+    display: none;
+}
+
+/* ===================== EDIT ACTION BUTTONS ===================== */
+.save-btn,
+.cancel-btn {
+    padding: 10px 20px;
+    border: none;
+    border-radius: 30px;
+    font-weight: bold;
+    cursor: pointer;
+    min-width: 100px;
+    text-align: center;
+}
+
+/* SAVE = GREEN */
+.save-btn {
+    background-color: #28a745;
+    color: #fff;
+}
+
+.save-btn:hover {
+    background-color: #218838;
+}
+
+/* CANCEL = RED */
+.cancel-btn {
+    background-color: #dc3545;
+    color: #fff;
+}
+
+.cancel-btn:hover {
+    background-color: #c82333;
+}
+.edit-actions {
+    display: flex;
+    gap: 10px;
+    justify-content: flex-end;
+    margin-top: 10px;
+}

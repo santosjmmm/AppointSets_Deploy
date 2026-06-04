@@ -1,8 +1,9 @@
 <?php
 include 'db.php';
 
-// 🗂️ FIXED MANUAL IMPORT PATHWAY (Stepping up one folder out of /api)
-define('MAILER_DIR', __DIR__ . '/../PHPMailer/');
+// 📁 UNIVERSAL PATH FIX (Works perfectly on local XAMPP and Cloud Railway)
+$root = $_SERVER['DOCUMENT_ROOT'];
+define('MAILER_DIR', $root . '/Backend/PHPMailer/');
 
 if (file_exists(MAILER_DIR . 'PHPMailer.php')) {
     require_once MAILER_DIR . 'Exception.php';
@@ -19,8 +20,15 @@ if (file_exists(MAILER_DIR . 'PHPMailer.php')) {
 use PHPMailer\PHPMailer\PHPMailer;
 use PHPMailer\PHPMailer\Exception;
 
-// Establish database connection block
-$conn = new mysqli("localhost", "root", "", "db_appsets");
+// ✅ Dynamic Connection block: Automatically swaps between local XAMPP and Cloud Railway
+$host     = $_ENV['MYSQLHOST']     ?? 'localhost';
+$user     = $_ENV['MYSQLUSER']     ?? 'root';
+$password = $_ENV['MYSQLPASSWORD'] ?? '';
+$database = $_ENV['MYSQLDATABASE'] ?? 'db_appsets';
+$port     = $_ENV['MYSQLPORT']     ?? '3306';
+
+$conn = new mysqli($host, $user, $password, $database, $port);
+
 if ($conn->connect_error) {
     echo json_encode(["success" => false, "message" => "Database connection breakdown: " . $conn->connect_error]);
     exit();

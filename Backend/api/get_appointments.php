@@ -1,22 +1,5 @@
 <?php
-// Set CORS headers to match your React/Vite dev environment
-header("Access-Control-Allow-Origin: http://localhost:5184");
-header("Access-Control-Allow-Credentials: true");
-header("Access-Control-Allow-Methods: GET, POST, OPTIONS");
-header("Access-Control-Allow-Headers: Content-Type");
-header("Content-Type: application/json");
-
-// Handle preflight OPTIONS request
-if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
-    exit;
-}
-
-$conn = new mysqli("localhost", "root", "", "db_appsets");
-
-if ($conn->connect_error) {
-    echo json_encode(["error" => "Connection failed"]);
-    exit;
-}
+include 'db.php';
 
 // Ensure variables are set to avoid "undefined index" notices
 $patient_id = isset($_GET['patient_id']) ? $_GET['patient_id'] : 0;

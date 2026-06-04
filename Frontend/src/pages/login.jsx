@@ -29,7 +29,7 @@ const Login = () => {
     setIsLoading(true);
 
     try {
-      const res = await fetch("http://localhost/appointsets/Backend/api/login.php", {
+      const res = await fetch("https://appointsetsdeploy-production.up.railway.app/login.php", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ email, password }),

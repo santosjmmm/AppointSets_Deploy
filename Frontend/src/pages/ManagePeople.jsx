@@ -50,7 +50,7 @@ const ManagePeople = () => {
   const handleToggleStatus = async (id, currentStatus) => {
     const nextStatus = currentStatus === 'Active' ? 'Inactive' : 'Active';
     try {
-      const response = await axios.post('http://localhost/appointsets/Backend/api/manage_people.php', {
+      const response = await axios.post('https://appointsetsdeploy-production.up.railway.app/manage_people.php', {
         action: 'toggle_status',
         role_type: activeTab.slice(0, -1), // strips 's' to pass 'patient', 'staff', 'dentist'
         id: id,
@@ -65,7 +65,7 @@ const ManagePeople = () => {
   const handleUpdate = async (e) => {
     e.preventDefault();
     try {
-      const response = await axios.post('http://localhost/appointsets/Backend/api/manage_people.php', {
+      const response = await axios.post('https://appointsetsdeploy-production.up.railway.app/manage_people.php', {
         action: 'update_user',
         role_type: activeTab.slice(0, -1),
         ...editUser

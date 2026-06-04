@@ -60,7 +60,7 @@ const Step4 = () => {
     };
 
     try {
-      const response = await fetch("http://localhost/appointsets/Backend/api/create_appointment.php", {
+      const response = await fetch("https://appointsetsdeploy-production.up.railway.app/create_appointment.php", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(appointmentPayload)

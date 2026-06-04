@@ -53,7 +53,7 @@ const Step2 = () => {
       try {
         const displayMonth = currentMonth + 1;
         const response = await fetch(
-          `http://localhost/appointsets/Backend/api/get_booked_slots.php?month=${displayMonth}&year=${currentYear}`
+          `https://appointsetsdeploy-production.up.railway.app/get_booked_slots.php?month=${displayMonth}&year=${currentYear}`
         );
         const data = await response.json();
         if (data.success) {

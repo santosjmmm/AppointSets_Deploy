@@ -115,7 +115,7 @@ const ManageServices = () => {
   const toggleStatus = async (id, currentStatus, type) => {
     try {
       await axios.post(
-        "http://localhost/appointsets/Backend/api/manage_services.php",
+        "https://appointsetsdeploy-production.up.railway.app/manage_services.php",
         { 
           action: "toggle_status", 
           service_id: id, 

@@ -25,7 +25,7 @@ const AdminDashboard = () => {
   const [activeTab, setActiveTab] = useState('patients'); 
 
   useEffect(() => {
-    fetch("http://localhost/appointsets/Backend/api/get_admin_stats.php")
+    fetch("https://appointsetsdeploy-production.up.railway.app/get_admin_stats.php")
       .then(res => {
         if (!res.ok) {
           throw new Error(`HTTP error! status: ${res.status}`);

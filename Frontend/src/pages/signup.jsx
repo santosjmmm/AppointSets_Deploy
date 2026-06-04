@@ -41,7 +41,7 @@ const Signup = () => {
     setStatusMessage('');
 
     try {
-      const response = await fetch("http://localhost/appointsets/Backend/api/signup.php", {
+      const response = await fetch("https://appointsetsdeploy-production.up.railway.app/signup.php", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({

@@ -1,24 +1,5 @@
 <?php
-// 1. Set Headers for React Communication (CORS)
-header("Access-Control-Allow-Origin: http://localhost:5184");
-header("Access-Control-Allow-Credentials: true");
-header("Access-Control-Allow-Methods: GET, POST, OPTIONS");
-header("Access-Control-Allow-Headers: Content-Type");
-header("Content-Type: application/json");
-
-// 2. Database Connection
-$host = "localhost";
-$user = "root";
-$pass = "";
-$dbname = "db_appsets";
-
-$conn = new mysqli($host, $user, $pass, $dbname);
-
-// Check Connection
-if ($conn->connect_error) {
-    echo json_encode(["error" => "Connection failed: " . $conn->connect_error]);
-    exit();
-}
+include 'db.php';
 
 // 3. Handle the Search Logic
 // We look for a 'search' parameter in the URL (e.g., get_patients.php?search=Juan)

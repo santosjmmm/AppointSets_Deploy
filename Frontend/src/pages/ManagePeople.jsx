@@ -36,7 +36,7 @@ const ManagePeople = () => {
   const fetchData = async () => {
     try {
       setLoading(true);
-      const response = await axios.get('http://localhost/appointsets/Backend/api/manage_people.php');
+      const response = await axios.get('https://appointsetsdeploy-production.up.railway.app/manage_people.php');
       if (response.data.success) {
         setDataGroup(response.data.data);
       }

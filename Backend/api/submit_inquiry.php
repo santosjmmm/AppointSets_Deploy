@@ -1,29 +1,30 @@
 <?php
-// 1. Allow your Vercel frontend to access this API securely
+// Allow your frontend to access this API securely
 header("Access-Control-Allow-Origin: https://appoint-sets-deploy.vercel.app");
 header("Access-Control-Allow-Methods: POST, OPTIONS");
 header("Access-Control-Allow-Headers: Content-Type, Authorization");
 header("Content-Type: application/json; charset=UTF-8");
 
-// Handle preflight OPTIONS requests from the browser gracefully
 if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
     http_response_code(200);
     exit;
 }
 
-// 📁 CASE-SENSITIVE LINUX & WINDOWS SAFE PATH COMPATIBILITY
-// __DIR__ is "/app/Backend/api" (or lowercase depending on execution). 
-// dirname(__DIR__) moves exactly one level up to the Backend folder folder safely.
-define('MAILER_DIR', dirname(__DIR__) . '/PHPMailer/');
+// 📁 DYNAMIC PATH RESOLUTION (Works perfectly on local XAMPP and Cloud Railway)
+// Since submit_inquiry.php is inside 'Backend/api/', going up one level gives us 'Backend/'
+$base_dir = dirname(__DIR__); 
+define('MAILER_DIR', realpath($base_dir . '/PHPMailer') . '/');
 
-if (file_exists(MAILER_DIR . 'PHPMailer.php')) {
+if (MAILER_DIR !== false && file_exists(MAILER_DIR . 'PHPMailer.php')) {
     require_once MAILER_DIR . 'Exception.php';
     require_once MAILER_DIR . 'PHPMailer.php';
     require_once MAILER_DIR . 'SMTP.php';
 } else {
+    // Fallback error reporting to debug path issues if any persist
+    $debug_path = ($base_dir) ? $base_dir . '/PHPMailer/' : 'Unknown Path';
     echo json_encode([
         "success" => false, 
-        "message" => "Critical Error: PHPMailer files not detected in: " . MAILER_DIR
+        "message" => "Critical Error: PHPMailer files not detected in: " . $debug_path
     ]);
     exit();
 }

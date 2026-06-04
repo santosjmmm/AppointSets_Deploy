@@ -10,7 +10,7 @@ const Services = () => {
 
   useEffect(() => {
     // Fetch data from the PHP API
-    fetch("http://localhost/appointsets/Backend/api/get_services.php")
+    fetch("https://appointsetsdeploy-production.up.railway.app/get_services.php")
       .then(response => response.json())
       .then(data => {
         const servicesData = data.services ? data.services : data;

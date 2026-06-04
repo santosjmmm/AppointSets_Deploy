@@ -25,7 +25,7 @@ const BookAppointment = () => {
     const fetchData = async () => {
       try {
         const response = await fetch(
-          "http://localhost/appointsets/Backend/api/set_appointment.php"
+          "https://appointsetsdeploy-production.up.railway.app/set_appointment.php"
         );
 
         const text = await response.text();

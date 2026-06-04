@@ -1,14 +1,5 @@
 <?php
-header("Access-Control-Allow-Origin: http://localhost:5184");
-header("Access-Control-Allow-Credentials: true");
-header("Access-Control-Allow-Methods: POST, OPTIONS");
-header("Access-Control-Allow-Headers: Content-Type");
-header("Content-Type: application/json");
-
-// Handle preflight options requests
-if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
-    exit(0);
-}
+include 'db.php';
 
 // 🗂️ FIXED MANUAL IMPORT PATHWAY (Stepping up one folder out of /api)
 define('MAILER_DIR', __DIR__ . '/../PHPMailer/');

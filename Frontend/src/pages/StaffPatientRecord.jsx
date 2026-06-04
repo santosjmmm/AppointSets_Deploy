@@ -19,7 +19,7 @@ const StaffPatientRecord = () => {
   const fetchPatients = async (query = "") => {
     setLoading(true);
     try {
-      const res = await fetch(`http://localhost/appointsets/Backend/api/patient_records.php?search=${encodeURIComponent(query)}`);
+      const res = await fetch(`https://appointsetsdeploy-production.up.railway.app/patient_records.php?search=${encodeURIComponent(query)}`);
       const data = await res.json();
       if (data.success) {
         setPatientsList(data.patients || []);

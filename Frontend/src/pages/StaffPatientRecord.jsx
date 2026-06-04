@@ -36,7 +36,7 @@ const StaffPatientRecord = () => {
   const fetchPatientProfile = async (id) => {
     setLoading(true);
     try {
-      const res = await fetch(`http://localhost/appointsets/Backend/api/patient_records.php?patient_id=${id}`);
+      const res = await fetch(`https://appointsetsdeploy-production.up.railway.app/patient_records.php?patient_id=${id}`);
       const data = await res.json();
       if (data.success) {
         setSelectedPatient(data.profile);

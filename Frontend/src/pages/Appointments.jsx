@@ -47,7 +47,7 @@ const Appointments = () => {
         const patientId = localStorage.getItem("patient_id");
 
         try {
-            const response = await fetch(`http://localhost/appointsets/Backend/api/get_appointments.php?patient_id=${patientId}&month=${month}&year=${year}`);
+            const response = await fetch(`https://appointsetsdeploy-production.up.railway.app/get_appointments.php?patient_id=${patientId}&month=${month}&year=${year}`);
             const data = await response.json();
             
             const organized = {};
@@ -74,7 +74,7 @@ const Appointments = () => {
         if (!selectedApt) return;
         
         try {
-            const response = await fetch("http://localhost/appointsets/Backend/api/cancel_appointment.php", {
+            const response = await fetch("https://appointsetsdeploy-production.up.railway.app/cancel_appointment.php", {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({

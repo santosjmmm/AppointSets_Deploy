@@ -17,7 +17,7 @@ const PatientRecords = () => {
     setLoading(true);
     try {
       // FIXED: Removed extra single quotes inside the backticks
-      const response = await axios.get(`http://localhost/appointsets/Backend/api/get_patientRecords.php?search=${query}`);
+      const response = await axios.get(`https://appointsetsdeploy-production.up.railway.app/get_patientRecords.php?search=${query}`);
       
       // Ensure we are setting an array even if the response is empty
       setPatients(Array.isArray(response.data) ? response.data : []);

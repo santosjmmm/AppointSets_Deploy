@@ -45,7 +45,7 @@ const AccountCreation = () => {
     try {
       // We exclude confirmPassword when sending to the backend
       const { confirmPassword, ...submitData } = formData;
-      const response = await axios.post('http://localhost/appointsets/Backend/api/create_account.php', submitData);
+      const response = await axios.post('https://appointsetsdeploy-production.up.railway.app/create_account.php', submitData);
       
       if (response.data.success) {
         setStatus({ type: 'success', message: `Account for ${formData.name} created successfully!` });

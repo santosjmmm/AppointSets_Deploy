@@ -20,7 +20,7 @@ const AppCalendar = () => {
   const fetchAppointments = async (month, year) => {
     setLoading(true);
     try {
-      const res = await fetch(`http://localhost/appointsets/Backend/api/calendar.php?month=${month}&year=${year}`);
+      const res = await fetch(`https://appointsetsdeploy-production.up.railway.app/calendar.php?month=${month}&year=${year}`);
       const data = await res.json();
       if (data.success) {
         setAppointments(data.appointments || {});

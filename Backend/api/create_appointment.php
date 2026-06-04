@@ -1,4 +1,16 @@
 <?php
+// 1. Allow your Vercel frontend to access this API
+header("Access-Control-Allow-Origin: https://appoint-sets-deploy.vercel.app");
+header("Access-Control-Allow-Methods: POST, OPTIONS");
+header("Access-Control-Allow-Headers: Content-Type, Authorization");
+header("Content-Type: application/json; charset=UTF-8");
+
+// Handle preflight OPTIONS requests from the browser gracefully
+if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
+    http_response_code(200);
+    exit;
+}
+
 include 'db.php';
 
 // If db.php connection somehow failed, don't keep executing
@@ -10,7 +22,7 @@ if (!$conn) {
 $json = file_get_contents('php://input');
 $data = json_decode($json, true);
 
-// ✅ FIX: Add fallback checks so empty data doesn't trigger a PHP crash
+// Add fallback checks so empty data doesn't trigger a PHP crash
 $patient_id   = isset($data['patient_id']) ? intval($data['patient_id']) : null;
 $service_name = $data['service'] ?? null;
 $dentist_name = $data['dentist'] ?? null;
@@ -96,15 +108,14 @@ if ($stmt->execute()) {
         $deductStmt->close();
     }
 
-echo json_encode([
-    "success" => true,
-    "stored_time" => $time,
-    "is_redeemed" => $is_redeemed,
-    "redeemed_points" => $redeemed_points
-]);
+    echo json_encode([
+        "success" => true,
+        "stored_time" => $time,
+        "is_redeemed" => $is_redeemed,
+        "redeemed_points" => $redeemed_points
+    ]);
 
 } else {
-
     echo json_encode([
         "success" => false,
         "message" => $stmt->error

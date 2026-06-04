@@ -1,18 +1,5 @@
 <?php
-// Disable showing errors as HTML to prevent breaking React JSON parsing
-ini_set('display_errors', 0);
-error_reporting(E_ALL);
-
-header("Access-Control-Allow-Origin: http://localhost:5184");
-header("Access-Control-Allow-Credentials: true");
-header("Access-Control-Allow-Methods: GET, POST, OPTIONS");
-header("Access-Control-Allow-Headers: Content-Type");
-header("Content-Type: application/json");
-
-if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
-    exit(0);
-}
-
+include 'db.php';
 session_start();
 
 // Custom error handler to send PHP issues as JSON instead of crashing HTML style

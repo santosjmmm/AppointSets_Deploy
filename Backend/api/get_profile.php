@@ -1,5 +1,9 @@
 <?php
-include 'db,php';
+header("Access-Control-Allow-Origin: http://localhost:5184");
+header("Access-Control-Allow-Credentials: true");
+header("Content-Type: application/json");
+
+$conn = new mysqli("localhost", "root", "", "db_appsets");
 
 if (isset($_GET['patient_id'])) {
     $id = $_GET['patient_id'];

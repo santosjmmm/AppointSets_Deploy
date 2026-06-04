@@ -32,7 +32,7 @@ const Records = () => {
         setLoading(true);
         const patientId = localStorage.getItem("patient_id");
         try {
-            const response = await fetch(`http://localhost/appointsets/Backend/api/get_records.php?patient_id=${patientId}`);
+            const response = await fetch(`https://appointsetsdeploy-production.up.railway.app/get_records.php?patient_id=${patientId}`);
             const data = await response.json();
             if (Array.isArray(data)) {
                 setRecords(data);

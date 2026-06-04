@@ -23,7 +23,7 @@ const Rewards = () => {
             const patient_id = localStorage.getItem("patient_id");
 
             const response = await fetch(
-                `http://localhost/appointsets/Backend/api/get_points.php?patient_id=${patient_id}`
+                `https://appointsetsdeploy-production.up.railway.app/get_points.php?patient_id=${patient_id}`
             );
 
             const data = await response.json();

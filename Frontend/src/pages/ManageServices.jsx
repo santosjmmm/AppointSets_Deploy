@@ -69,7 +69,7 @@ const ManageServices = () => {
       if (editingId) data.append("service_id", editingId);
 
       const response = await axios.post(
-        "http://localhost/appointsets/Backend/api/manage_services.php",
+        "https://appointsetsdeploy-production.up.railway.app/manage_services.php",
         data,
         { headers: { "Content-Type": "multipart/form-data" } }
       );

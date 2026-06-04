@@ -1,17 +1,5 @@
 <?php
-header("Access-Control-Allow-Origin: http://localhost:5184");
-header("Access-Control-Allow-Credentials: true");
-header("Access-Control-Allow-Methods: GET, POST, OPTIONS");
-header("Access-Control-Allow-Headers: Content-Type");
-header("Content-Type: application/json");
-
-if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') exit;
-
-$conn = new mysqli("localhost", "root", "", "db_appsets");
-if ($conn->connect_error) {
-    echo json_encode(["success" => false, "message" => "Connection failed"]);
-    exit();
-}
+include 'db.php';
 
 // ==========================================
 // GET REQUEST: Fetch data separated by tables

@@ -1,35 +1,5 @@
 <?php
-// Disable showing errors as HTML to prevent breaking React JSON parsing
-ini_set('display_errors', 0);
-error_reporting(E_ALL);
-
-header("Access-Control-Allow-Origin: https://appoint-sets-deploy.vercel.app");
-header("Access-Control-Allow-Credentials: true");
-header("Access-Control-Allow-Methods: GET, POST, OPTIONS");
-header("Access-Control-Allow-Headers: Content-Type");
-header("Content-Type: application/json");
-
-if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
-    exit(0);
-}
-session_start();
-
-// Custom error handler to send PHP issues as JSON instead of crashing HTML style
-set_error_handler(function($severity, $message, $file, $line) {
-    if (!(error_reporting() & $severity)) {
-        return;
-    }
-    echo json_encode(["error" => "PHP Runtime Error: $message in $file on line $line"]);
-    exit;
-});
-
-// Database Connection
-$conn = new mysqli("localhost", "root", "", "db_appsets");
-if ($conn->connect_error) {
-    echo json_encode(["error" => "Database link failure: " . $conn->connect_error]);
-    exit;
-}
-
+include 'db.php';
 $today = date('Y-m-d');
 
 // 1. Authenticated Admin Context Resolution

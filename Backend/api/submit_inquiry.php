@@ -1,9 +1,20 @@
 <?php
-include 'db.php';
+// 1. Allow your Vercel frontend to access this API securely
+header("Access-Control-Allow-Origin: https://appoint-sets-deploy.vercel.app");
+header("Access-Control-Allow-Methods: POST, OPTIONS");
+header("Access-Control-Allow-Headers: Content-Type, Authorization");
+header("Content-Type: application/json; charset=UTF-8");
 
-// 📁 UNIVERSAL PATH FIX (Works perfectly on local XAMPP and Cloud Railway)
-$root = $_SERVER['DOCUMENT_ROOT'];
-define('MAILER_DIR', $root . '/Backend/PHPMailer/');
+// Handle preflight OPTIONS requests from the browser gracefully
+if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
+    http_response_code(200);
+    exit;
+}
+
+// 📁 CASE-SENSITIVE LINUX & WINDOWS SAFE PATH COMPATIBILITY
+// __DIR__ is "/app/Backend/api" (or lowercase depending on execution). 
+// dirname(__DIR__) moves exactly one level up to the Backend folder folder safely.
+define('MAILER_DIR', dirname(__DIR__) . '/PHPMailer/');
 
 if (file_exists(MAILER_DIR . 'PHPMailer.php')) {
     require_once MAILER_DIR . 'Exception.php';

@@ -27,7 +27,7 @@ const Step3 = () => {
     }
 
     // 2. Fetch Patient Data from Database
-    fetch('https://appointsetsdeploy-production.up.railway.app/get_profile.php?patient_id=${patientId}`)
+    fetch('https://appointsetsdeploy-production.up.railway.app/get_profile.php?patient_id=${patientId}')
       .then(res => res.json())
       .then(data => {
         if (!data.error) {

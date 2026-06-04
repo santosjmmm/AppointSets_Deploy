@@ -28,7 +28,7 @@ const Contact = () => {
     setAlert({ type: "", message: "" });
 
     try {
-      const response = await fetch("http://localhost/appointsets/Backend/api/submit_inquiry.php", {
+      const response = await fetch("https://appointsetsdeploy-production.up.railway.app/submit_inquiry.php", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(formData)

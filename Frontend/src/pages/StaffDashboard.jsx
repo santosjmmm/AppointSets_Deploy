@@ -22,7 +22,7 @@ const StaffDashboard = () => {
 
     const fetchDashboardData = async () => {
       try {
-        const res = await fetch("http://localhost/appointsets/Backend/api/dashboard_stats.php");
+        const res = await fetch("https://appointsetsdeploy-production.up.railway.app/dashboard_stats.php");
         const data = await res.json();
         if (data.success) {
           setStats(data.stats);

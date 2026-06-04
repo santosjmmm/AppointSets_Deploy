@@ -23,7 +23,7 @@ const ManageServices = () => {
   const fetchServices = async () => {
     try {
       const response = await axios.get(
-        "http://localhost/appointsets/Backend/api/manage_services.php"
+        "https://appointsetsdeploy-production.up.railway.app/manage_services.php"
       );
 
       if (Array.isArray(response.data)) {

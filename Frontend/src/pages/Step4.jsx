@@ -40,12 +40,25 @@ const Step4 = () => {
     setLoading(true);
     setError("");
 
+    // ✅ FIX: Format raw date into clean database-compliant YYYY-MM-DD
+    let formattedDbDate = summary.date;
+    if (summary.date) {
+      const d = new Date(summary.date);
+      // Validate that the date string converts safely before extracting components
+      if (!isNaN(d.getTime())) {
+        const year = d.getFullYear();
+        const month = String(d.getMonth() + 1).padStart(2, '0');
+        const day = String(d.getDate()).padStart(2, '0');
+        formattedDbDate = `${year}-${month}-${day}`;
+      }
+    }
+
     // Construct payload using values finalized by the user
     const appointmentPayload = {
       patient_id: localStorage.getItem("patient_id"),
       service: summary.service,
       dentist: summary.dentist,
-      date: summary.date,
+      date: formattedDbDate, // ✅ Injected safe date string
       time: summary.time,
       
       patient_name: patientDetails.name,

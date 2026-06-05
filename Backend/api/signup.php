@@ -79,45 +79,48 @@ if ($_SERVER["REQUEST_METHOD"] === "POST" && $data) {
         // SMTP Authentication Variables
         $smtp_user = 'santosjm62904@gmail.com'; 
         $smtp_pass = 'sief nmae lsst ermn';        
+$mail = new PHPMailer(true);
 
-        $mail = new PHPMailer(true);
-        $mail->SMTPDebug = 2;
+try {
+    $mail->isSMTP();
+    $mail->Host = 'smtp.gmail.com';
+    $mail->SMTPAuth = true;
+    $mail->Username = $smtp_user;
+    $mail->Password = $smtp_pass;
+    $mail->SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS;
+    $mail->Port = 587;
 
-$mail->Debugoutput = function ($str, $level) {
-    error_log("SMTP DEBUG: $str");
-};
-        try {
-            $mail->isSMTP();
-            $mail->Host       = 'smtp.gmail.com'; 
-            $mail->SMTPAuth   = true;
-            $mail->Username   = $smtp_user; 
-            $mail->Password   = $smtp_pass;        
-            $mail->SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS;
-            $mail->Port       = 587;
+    // ❌ REMOVE DEBUG (THIS BREAKS JSON ON RAILWAY)
+    $mail->SMTPDebug = 0;
 
-            $mail->setFrom($smtp_user, "C'Smiles Dental");
-            $mail->addAddress($email);
+    $mail->setFrom($smtp_user, "C'Smiles Dental");
+    $mail->addAddress($email);
 
-            $mail->isHTML(true);
-            $mail->Subject = 'Account Registration Verification Code';
-            $mail->Body    = "
-                <div style='font-family: Arial, sans-serif; padding: 20px; color: #333;'>
-                    <h2 style='color: #1cb9d0;'>Welcome to C'Smiles Dental System!</h2>
-                    <p>Please use the verification code below to verify your identity and complete your account setup:</p>
-                    <div style='background-color: #f0fbfb; border: 2px dashed #1cb9d0; padding: 15px; font-size: 24px; font-weight: bold; text-align: center; letter-spacing: 5px; margin: 20px 0; color: #2d3436;'>
-                        $otp
-                    </div>
-                    <p style='font-size: 12px; color: #999;'>This registration code context expires within 5 minutes.</p>
-                </div>
-            ";
+    $mail->isHTML(true);
+    $mail->Subject = "Verification Code";
 
-            $mail->send();
-            echo json_encode(["success" => true, "message" => "Verification OTP code sent to your email address!"]);
-        } catch (Exception $e) {
-            echo json_encode(["success" => false, "message" => "Mailer Exception Error: {$mail->ErrorInfo}"]);
-        }
-        exit();
-    }
+    $mail->Body = "
+        <div style='font-family:Arial;padding:20px'>
+            <h2>Verification Code</h2>
+            <h1 style='letter-spacing:5px'>{$otp}</h1>
+        </div>
+    ";
+
+    $mail->send();
+
+    echo json_encode([
+        "success" => true,
+        "message" => "OTP sent successfully"
+    ]);
+
+} catch (Exception $e) {
+    echo json_encode([
+        "success" => false,
+        "message" => "Email failed",
+        "error" => $mail->ErrorInfo
+    ]);
+}
+exit;
 
     // ==========================================
     // ACTION 2: VERIFY OTP AND COMMIT USER REGISTRATION

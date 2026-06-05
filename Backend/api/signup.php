@@ -1,15 +1,22 @@
 <?php
+// 1. Incorporate centralized configuration metrics (Handles connections, CORS handshakes, headers)
 include_once 'db.php';
 
-header("Content-Type: application/json");
+// 2. Clear out manual connections to avoid rewriting environmental setups
+// Explicitly resolve the case-sensitive pathing framework relative to directory boundaries
+define('MAILER_DIR', dirname(__DIR__) . '/PHPMailer/');
 
-$data = json_decode(file_get_contents("php://input"), true);
-$action = $data['action'] ?? '';
+if (!file_exists(MAILER_DIR . 'PHPMailer.php')) {
+    echo json_encode([
+        "success" => false,
+        "message" => "Critical Error: PHPMailer files not detected in: " . MAILER_DIR
+    ]);
+    exit();
+}
 
-// PHPMailer
-require_once __DIR__ . '/../PHPMailer/Exception.php';
-require_once __DIR__ . '/../PHPMailer/PHPMailer.php';
-require_once __DIR__ . '/../PHPMailer/SMTP.php';
+require_once MAILER_DIR . 'Exception.php';
+require_once MAILER_DIR . 'PHPMailer.php';
+require_once MAILER_DIR . 'SMTP.php';
 
 use PHPMailer\PHPMailer\PHPMailer;
 use PHPMailer\PHPMailer\Exception;

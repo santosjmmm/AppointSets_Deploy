@@ -20,7 +20,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
 $host     = getenv('MYSQLHOST') ?: 'localhost';
 $user     = getenv('MYSQLUSER') ?: 'root';
 $password = getenv('MYSQLPASSWORD') ?: '';
-$database = getenv('MYSQLDATABASE') ?: 'db_appsets';
+$database = getenv('MYSQLDATABASE') ?: 'railway';
 $port     = getenv('MYSQLPORT') ?: '3306';
 
 // 5. Establish connection

@@ -1,41 +1,15 @@
 <?php
-// 1. Incorporate centralized configuration metrics (Handles connection, CORS, headers)
 include_once 'db.php';
 
-// 2. Capture the incoming JSON string payload safely first
+header("Content-Type: application/json");
+
 $data = json_decode(file_get_contents("php://input"), true);
 $action = $data['action'] ?? '';
 
-// 3. Dynamic Path Finder: Strict Fallback Chain for Production Linux Environments
-$baseDir = dirname(__DIR__);
-if (empty($baseDir) || $baseDir === '/' || $baseDir === '\\') {
-    $baseDir = __DIR__;
-}
-
-$absoluteMailerPath = rtrim($baseDir, '/\\') . '/PHPMailer/';
-
-if (defined('GLOBAL_MAILER_DIR') && file_exists(GLOBAL_MAILER_DIR . 'PHPMailer.php')) {
-    define('FINAL_MAILER_PATH', GLOBAL_MAILER_DIR);
-} elseif (file_exists($absoluteMailerPath . 'PHPMailer.php')) {
-    define('FINAL_MAILER_PATH', $absoluteMailerPath);
-} elseif (file_exists(__DIR__ . '/../PHPMailer/PHPMailer.php')) {
-    define('FINAL_MAILER_PATH', __DIR__ . '/../PHPMailer/');
-} elseif (file_exists(__DIR__ . '/PHPMailer/PHPMailer.php')) {
-    define('FINAL_MAILER_PATH', __DIR__ . '/PHPMailer/');
-} elseif (file_exists(__DIR__ . '/../phpmailer/PHPMailer.php')) { 
-    define('FINAL_MAILER_PATH', __DIR__ . '/../phpmailer/');
-} else {
-    echo json_encode([
-        "success" => false,
-        "message" => "Critical Error: PHPMailer files not detected in system directories. Tracked absolute route: " . $absoluteMailerPath . " | Current execution dir: " . __DIR__
-    ]);
-    exit();
-}
-
-// Require the verified paths
-require_once FINAL_MAILER_PATH . 'Exception.php';
-require_once FINAL_MAILER_PATH . 'PHPMailer.php';
-require_once FINAL_MAILER_PATH . 'SMTP.php';
+// PHPMailer
+require_once __DIR__ . '/../PHPMailer/Exception.php';
+require_once __DIR__ . '/../PHPMailer/PHPMailer.php';
+require_once __DIR__ . '/../PHPMailer/SMTP.php';
 
 use PHPMailer\PHPMailer\PHPMailer;
 use PHPMailer\PHPMailer\Exception;
@@ -93,6 +67,11 @@ if ($_SERVER["REQUEST_METHOD"] === "POST" && $data) {
         $smtp_pass = 'sief nmae lsst ermn';        
 
         $mail = new PHPMailer(true);
+        $mail->SMTPDebug = 2;
+
+$mail->Debugoutput = function ($str, $level) {
+    error_log("SMTP DEBUG: $str");
+};
         try {
             $mail->isSMTP();
             $mail->Host       = 'smtp.gmail.com'; 

@@ -1,35 +1,5 @@
 <?php
-error_reporting(0);
-ini_set('display_errors', 0);
-
-// Clear any accidental output buffers
-if (ob_get_length()) ob_clean();
-
-// ✅ FIXED: Removed the trailing slash at the end of the URL
-header("Access-Control-Allow-Origin: https://appoint-sets-deploy.vercel.app");
-header("Access-Control-Allow-Credentials: true");
-header("Access-Control-Allow-Methods: POST, GET, OPTIONS");
-header("Access-Control-Allow-Headers: Content-Type, Authorization, X-Requested-With");
-header("Content-Type: application/json; charset=UTF-8");
-
-if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
-    http_response_code(200);
-    exit;
-}
-
-// ✅ FIXED: Connect dynamically using Railway's environment variables, fallback to local settings
-$host     = getenv('MYSQLHOST') ?: 'localhost';
-$user     = getenv('MYSQLUSER') ?: 'root';
-$password = getenv('MYSQLPASSWORD') ?: '';
-$database = getenv('MYSQLDATABASE') ?: 'railway'; 
-$port     = getenv('MYSQLPORT') ?: '3306';
-
-$conn = new mysqli($host, $user, $password, $database, $port);
-
-if ($conn->connect_error) {
-    echo json_encode(["success" => false, "message" => "Database connection failed"]);
-    exit;
-}
+include 'db.php';
 
 $data = json_decode(file_get_contents("php://input"), true);
 $email = trim($data['email'] ?? '');

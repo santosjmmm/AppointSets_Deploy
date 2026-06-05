@@ -1,21 +1,27 @@
 <?php
-include 'db.php';
+// 1. Incorporate centralized configuration metrics (Handles connections, CORS handshakes, headers)
+include_once 'db.php';
 
-// Absolute paths to prevent case-sensitive path bugs with PHPMailer
-require_once __DIR__ . '/../PHPMailer/Exception.php';
-require_once __DIR__ . '/../PHPMailer/PHPMailer.php';
-require_once __DIR__ . '/../PHPMailer/SMTP.php';
+// 2. Clear out manual connections to avoid rewriting environmental setups
+// Explicitly resolve the case-sensitive pathing framework relative to directory boundaries
+define('MAILER_DIR', dirname(__DIR__) . '/PHPMailer/');
+
+if (!file_exists(MAILER_DIR . 'PHPMailer.php')) {
+    echo json_encode([
+        "success" => false,
+        "message" => "Critical Error: PHPMailer files not detected in: " . MAILER_DIR
+    ]);
+    exit();
+}
+
+require_once MAILER_DIR . 'Exception.php';
+require_once MAILER_DIR . 'PHPMailer.php';
+require_once MAILER_DIR . 'SMTP.php';
 
 use PHPMailer\PHPMailer\PHPMailer;
 use PHPMailer\PHPMailer\Exception;
 
-$conn = new mysqli("localhost", "root", "", "db_appsets");
-
-if ($conn->connect_error) {
-    echo json_encode(["success" => false, "message" => "Database Connection Failed"]);
-    exit();
-}
-
+// Capture the incoming JSON string payload safely
 $data = json_decode(file_get_contents("php://input"), true);
 $action = $data['action'] ?? '';
 
@@ -39,7 +45,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST" && $data) {
             exit();
         }
 
-        // Check if email already exists in tb_patient
+        // Validate unique target record structure matching tables cleanly
         $check = $conn->prepare("SELECT patient_id FROM tb_patient WHERE email = ?");
         $check->bind_param("s", $email);
         $check->execute();
@@ -52,11 +58,11 @@ if ($_SERVER["REQUEST_METHOD"] === "POST" && $data) {
         }
         $check->close();
 
-        // Generate OTP Code
+        // Safe randomly populated verification tracking values
         $otp = (string)rand(100000, 999999);
         $expires_at = date("Y-m-d H:i:s", strtotime("+5 minutes"));
 
-        // Save OTP Code to Verification Record Window
+        // Flush expired historical logs matching the user target scope
         $clear = $conn->prepare("DELETE FROM tb_otp_verification WHERE email = ?");
         $clear->bind_param("s", $email);
         $clear->execute();
@@ -67,7 +73,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST" && $data) {
         $ins->execute();
         $ins->close();
 
-        // PHPMailer Core Routine Block
+        // SMTP Authentication Variables
         $smtp_user = 'santosjm62904@gmail.com'; 
         $smtp_pass = 'sief nmae lsst ermn';        
 
@@ -124,7 +130,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST" && $data) {
 
         $current_time = date("Y-m-d H:i:s");
 
-        // Validate token matches active database instance
+        // Scan verification matrix layers securely
         $check = $conn->prepare("SELECT id FROM tb_otp_verification WHERE email = ? AND otp_code = ? AND expires_at > ? ORDER BY id DESC LIMIT 1");
         $check->bind_param("sss", $email, $otp, $current_time);
         $check->execute();
@@ -136,14 +142,14 @@ if ($_SERVER["REQUEST_METHOD"] === "POST" && $data) {
             exit();
         }
 
-        // Complete database insertion configuration
+        // Encrypt the plain text string securely
         $hashed_password = password_hash($password, PASSWORD_DEFAULT);
         
         $stmt = $conn->prepare("INSERT INTO tb_patient (name, age, contact_num, address, email, password) VALUES (?, ?, ?, ?, ?, ?)");
         $stmt->bind_param("ssssss", $full_name, $age, $contact_number, $address, $email, $hashed_password);
 
         if ($stmt->execute()) {
-            // Delete verification code trace on successful record creation
+            // Delete code traces on complete record generation sequence
             $del = $conn->prepare("DELETE FROM tb_otp_verification WHERE email = ?");
             $del->bind_param("s", $email);
             $del->execute();

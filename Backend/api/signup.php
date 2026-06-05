@@ -3,7 +3,7 @@
 error_reporting(E_ALL);
 ini_set('display_errors', 1);
 
-// 2. Set globally required security and CORS headers (Fixes the Vercel connection block)
+// 2. Set globally required security and CORS headers
 header("Access-Control-Allow-Origin: https://appoint-sets-deploy.vercel.app");
 header("Access-Control-Allow-Methods: POST, GET, OPTIONS, DELETE");
 header("Access-Control-Allow-Headers: Content-Type, Authorization, X-Requested-With");
@@ -16,52 +16,45 @@ if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
     exit();
 }
 
-// 4. Dynamic environment mapping (Railway vs Local XAMPP)
-$host     = getenv('MYSQLHOST') ?: 'localhost';
-$user     = getenv('MYSQLUSER') ?: 'root';
-$password = getenv('MYSQLPASSWORD') ?: '';
-$database = getenv('MYSQLDATABASE') ?: 'db_appsets';
-$port     = getenv('MYSQLPORT') ?: '3306';
-
-// 5. Establish connection
-$conn = new mysqli($host, $user, $password, $database, $port);
-
-if ($conn->connect_error) {
+// 4. Safely include db.php based on current folder execution
+if (file_exists(__DIR__ . '/db.php')) {
+    include_once __DIR__ . '/db.php';
+} else {
     echo json_encode([
-        "success" => false, 
-        "message" => "Database connection failed: " . $conn->connect_error
+        "success" => false,
+        "message" => "Critical Error: db.php configuration file could not be found.",
+        "debug_dir" => __DIR__
     ]);
     exit();
 }
 
-// 6. Read Request Data
+// 5. Capture incoming JSON data stream safely
 $data = json_decode(file_get_contents("php://input"), true) ?? [];
 $action = $data['action'] ?? '';
 
-// 7. PHPMailer structural check fallback for Railway /app execution
-if (file_exists(__DIR__ . '/PHPMailer/PHPMailer.php')) {
-    $mailerPath = __DIR__ . '/PHPMailer/';
-} elseif (file_exists(__DIR__ . '/../PHPMailer/PHPMailer.php')) {
-    $mailerPath = __DIR__ . '/../PHPMailer/';
-} elseif (file_exists(__DIR__ . '/Backend/PHPMailer/PHPMailer.php')) {
-    $mailerPath = __DIR__ . '/Backend/PHPMailer/';
+// 6. Dynamic Path Finder for PHPMailer (Looks out one directory level if inside api/)
+if (file_exists(__DIR__ . '/../PHPMailer/PHPMailer.php')) {
+    define('FINAL_MAILER_PATH', __DIR__ . '/../PHPMailer/');
+} elseif (file_exists(__DIR__ . '/PHPMailer/PHPMailer.php')) {
+    define('FINAL_MAILER_PATH', __DIR__ . '/PHPMailer/');
 } else {
     echo json_encode([
         "success" => false,
-        "message" => "PHPMailer missing from folder tree paths.",
-        "debug" => __DIR__
+        "message" => "Critical Error: PHPMailer files not detected in system directories.",
+        "tracked_route" => __DIR__
     ]);
-    exit;
+    exit();
 }
 
-require_once $mailerPath . 'Exception.php';
-require_once $mailerPath . 'PHPMailer.php';
-require_once $mailerPath . 'SMTP.php';
+// Require the verified PHPMailer dependencies
+require_once FINAL_MAILER_PATH . 'Exception.php';
+require_once FINAL_MAILER_PATH . 'PHPMailer.php';
+require_once FINAL_MAILER_PATH . 'SMTP.php';
 
 use PHPMailer\PHPMailer\PHPMailer;
 use PHPMailer\PHPMailer\Exception;
 
-if ($_SERVER["REQUEST_METHOD"] === "POST" && $data) {
+if ($_SERVER["REQUEST_METHOD"] === "POST" && !empty($data)) {
     
     // ==========================================
     // ACTION 1: VALIDATE DETAILS AND SEND OTP
@@ -142,7 +135,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST" && $data) {
         } catch (Exception $e) {
             echo json_encode([
                 "success" => false,
-                "message" => "Email failed",
+                "message" => "Email failed to send",
                 "error" => $mail->ErrorInfo
             ]);
         }

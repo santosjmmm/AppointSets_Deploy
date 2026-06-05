@@ -1,25 +1,44 @@
 <?php
-// 1. Incorporate centralized configuration metrics (Handles connections, CORS handshakes, headers)
+<?php
+
 include_once 'db.php';
 
-// 2. Clear out manual connections to avoid rewriting environmental setups
-// Explicitly resolve the case-sensitive pathing framework relative to directory boundaries
-define('MAILER_DIR', dirname(__DIR__) . '/PHPMailer/');
+$data = json_decode(file_get_contents("php://input"), true);
+$action = $data['action'] ?? '';
 
-if (!file_exists(MAILER_DIR . 'PHPMailer.php')) {
+// PHPMailer path resolution
+$possiblePaths = [
+    __DIR__ . '/PHPMailer/',
+    __DIR__ . '/../PHPMailer/',
+    dirname(__FILE__) . '/PHPMailer/',
+    dirname(__FILE__) . '/../PHPMailer/',
+];
+
+$mailerPath = '';
+
+foreach ($possiblePaths as $path) {
+    if (file_exists($path . 'PHPMailer.php')) {
+        $mailerPath = $path;
+        break;
+    }
+}
+
+if (empty($mailerPath)) {
     echo json_encode([
         "success" => false,
-        "message" => "Critical Error: PHPMailer files not detected in: " . MAILER_DIR
+        "message" => "PHPMailer not found",
+        "current_dir" => __DIR__,
+        "checked_paths" => $possiblePaths
     ]);
     exit();
 }
 
-require_once MAILER_DIR . 'Exception.php';
-require_once MAILER_DIR . 'PHPMailer.php';
-require_once MAILER_DIR . 'SMTP.php';
+require_once $mailerPath . 'Exception.php';
+require_once $mailerPath . 'PHPMailer.php';
+require_once $mailerPath . 'SMTP.php';
 
 use PHPMailer\PHPMailer\PHPMailer;
-use PHPMailer\PHPMailer\Exception;
+use PHPMailer\PHPMailer\Exception;n;
 
 if ($_SERVER["REQUEST_METHOD"] === "POST" && $data) {
     

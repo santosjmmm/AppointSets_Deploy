@@ -2,28 +2,21 @@
 
 include_once 'db.php';
 
-header("Content-Type: application/json");
+header("Content-Type: application/json; charset=UTF-8");
 
-// Read JSON input safely
 $data = json_decode(file_get_contents("php://input"), true) ?? [];
 $action = $data['action'] ?? '';
 
-// --------------------------------------
-// PHPMailer SIMPLE RELIABLE LOADER
-// --------------------------------------
-
+// -------------------------
+// PHPMailer loader (safe)
+// -------------------------
 $mailerPath = __DIR__ . '/PHPMailer/';
 
 if (!file_exists($mailerPath . 'PHPMailer.php')) {
-
     echo json_encode([
         "success" => false,
         "message" => "PHPMailer not found",
-        "debug" => [
-            "current_dir" => __DIR__,
-            "checked_path" => $mailerPath,
-            "root_files" => scandir("/app")
-        ]
+        "debug" => $mailerPath
     ]);
     exit;
 }

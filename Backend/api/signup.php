@@ -24,12 +24,12 @@ foreach ($possiblePaths as $path) {
 
 if (empty($mailerPath)) {
     echo json_encode([
-        "success" => false,
-        "message" => "PHPMailer not found",
-        "current_dir" => __DIR__,
-        "checked_paths" => $possiblePaths
-    ]);
-    exit();
+    "current_dir" => __DIR__,
+    "root_files" => scandir("/app"),
+    "backend_exists" => is_dir("/app/Backend"),
+    "backend_files" => is_dir("/app/Backend") ? scandir("/app/Backend") : "NOT FOUND"
+]);
+exit;
 }
 
 require_once $mailerPath . 'Exception.php';

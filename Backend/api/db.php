@@ -32,6 +32,8 @@ if ($conn->connect_error) {
         "message" => "Database connection failed: " . $conn->connect_error
     ]);
     exit();
-
-define('GLOBAL_MAILER_DIR', dirname(__DIR__) . '/PHPMailer/');
 }
+
+// ✅ FIXED: Placed safely outside the error block so it always runs
+define('GLOBAL_MAILER_DIR', dirname(__DIR__) . '/PHPMailer/');
+?>

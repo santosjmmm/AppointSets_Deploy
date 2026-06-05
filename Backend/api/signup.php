@@ -1,5 +1,5 @@
 <?php
-include_once 'db.php';
+include 'db.php';
 
 // Dynamic Path Finder: Check absolute, relative, and lowercase fallback folders
 if (file_exists(GLOBAL_MAILER_DIR . 'PHPMailer.php')) {

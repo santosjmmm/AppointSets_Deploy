@@ -40,7 +40,7 @@ const Signup = () => {
     setError('');
     setStatusMessage('');
 
-try {
+ttry {
   const response = await fetch("https://appointsetsdeploy-production.up.railway.app/signup.php", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
@@ -79,28 +79,31 @@ try {
     setLoading(true);
     setError('');
 
-    try {
-      // ✅ FIXED: Connected directly to production API endpoint instead of localhost
-      const response = await fetch("https://appointsetsdeploy-production.up.railway.app/signup.php", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          ...formData,
-          otp: otp,
-          action: "verify_and_register"
-        }),
-      });
+try {
+  const response = await fetch("https://appointsetsdeploy-production.up.railway.app/signup.php", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({
+      ...formData,
+      otp,
+      action: "verify_and_register"
+    }),
+  });
 
-      const data = await response.json();
-      if (data.success) {
-        alert("Account Registered Safely!");
-        navigate('/login');
-      } else {
-        setError(data.message || "Incorrect code entered.");
-      }
-    } catch (err) {
-      setError("Connection failure while executing validation checklist query.");
-    } finally {
+  const text = await response.text();
+  const data = JSON.parse(text);
+
+  if (data.success) {
+    alert("Account Registered!");
+    navigate("/login");
+  } else {
+    setError(data.message);
+  }
+
+} catch (err) {
+  console.error(err);
+  setError("Server connection failed");
+}finally {
       setLoading(false);
     }
   };

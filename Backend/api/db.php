@@ -33,7 +33,4 @@ if ($conn->connect_error) {
     ]);
     exit();
 }
-
-// ✅ FIXED: Placed safely outside the error block so it always runs
-define('GLOBAL_MAILER_DIR', dirname(__DIR__) . '/PHPMailer/');
 ?>

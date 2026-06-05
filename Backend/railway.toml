@@ -2,8 +2,8 @@
 builder = "nixpacks"
 
 [phases.setup]
-pkgs = [
-  "php",
+nixPkgs = [
+  "php82",
   "php82Extensions.mysqli",
   "php82Extensions.pdo_mysql"
 ]

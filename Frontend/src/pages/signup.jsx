@@ -28,7 +28,7 @@ const Signup = () => {
     setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
-  // Phase 1 Request Handler: Request Validation Code
+ // Phase 1 Request Handler: Request Validation Code
   const handleRequestOtp = async (e) => {
     e.preventDefault();
     if (formData.password !== formData.confirm_password) {
@@ -40,30 +40,38 @@ const Signup = () => {
     setError('');
     setStatusMessage('');
 
-try {
-  const response = await fetch("https://appointsetsdeploy-production.up.railway.app/signup.php", {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({
-      ...formData,
-      action: "send_signup_otp"
-    }),
-  });
+    try {
+      const response = await fetch("https://appointsetsdeploy-production.up.railway.app/api/signup.php", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          ...formData,
+          action: "send_signup_otp"
+        }),
+      });
 
-  const text = await response.text();
-  const data = JSON.parse(text);
+      const text = await response.text();
+      
+      // Safety Check: If the response doesn't look like JSON, show the raw error text directly
+      if (!text.trim().startsWith('{')) {
+         console.error("Raw Server Error Text:", text);
+         setError(`Server Configuration Issue: ${text.substring(0, 100)}`);
+         return;
+      }
 
-  if (data.success) {
-    setIsOtpSent(true);
-    setStatusMessage(data.message);
-  } else {
-    setError(data.message || "Failed");
-  }
+      const data = JSON.parse(text);
 
-} catch (err) {
-  console.error("FULL ERROR:", err);
-  setError("Server connection failed (check console)");
-} finally {
+      if (data.success) {
+        setIsOtpSent(true);
+        setStatusMessage(data.message);
+      } else {
+        setError(data.message || "Failed");
+      }
+
+    } catch (err) {
+      console.error("FULL ERROR:", err);
+      setError("Server connection failed (check console)");
+    } finally {
       setLoading(false);
     }
   };

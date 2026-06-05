@@ -16,17 +16,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
     exit();
 }
 
-// 4. Safely include db.php based on current folder execution
-if (file_exists(__DIR__ . '/db.php')) {
-    include_once __DIR__ . '/db.php';
-} else {
-    echo json_encode([
-        "success" => false,
-        "message" => "Critical Error: db.php configuration file could not be found.",
-        "debug_dir" => __DIR__
-    ]);
-    exit();
-}
+
 
 // 5. Capture incoming JSON data stream safely
 $data = json_decode(file_get_contents("php://input"), true) ?? [];

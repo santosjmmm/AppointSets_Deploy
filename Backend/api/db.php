@@ -15,7 +15,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
     http_response_code(200);
     exit();
 }
-
+echo json_encode([
+    "mysqli_exists" => class_exists("mysqli"),
+    "pdo_exists" => class_exists("PDO"),
+    "pdo_mysql_loaded" => extension_loaded("pdo_mysql")
+]);
+exit;
 // 4. Dynamic environment mapping (Railway vs Local XAMPP)
 $host     = getenv('MYSQLHOST') ?: 'localhost';
 $user     = getenv('MYSQLUSER') ?: 'root';

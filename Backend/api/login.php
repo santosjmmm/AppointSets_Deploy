@@ -2,7 +2,8 @@
 error_reporting(E_ALL);
 ini_set('display_errors', 1);
 
-// Configure CORS handshakes safely for Vercel distributions
+// Configure CORS handshakes safely
+// NOTE: Ensure this origin string EXACTLY matches where your React app is hosted!
 header("Access-Control-Allow-Origin: https://appoint-sets-deploy.vercel.app");
 header("Access-Control-Allow-Methods: POST, GET, OPTIONS, DELETE");
 header("Access-Control-Allow-Headers: Content-Type, Authorization, X-Requested-With");
@@ -26,34 +27,41 @@ if (file_exists(__DIR__ . '/db.php')) {
     exit();
 }
 
-// Processing code continues below...
-// (Make sure to remove any closing '?>' tag at the very end of your file!)
-
+// Read and decode the raw JSON payload
 $data = json_decode(file_get_contents("php://input"), true);
 $email = trim($data['email'] ?? '');
 $password = trim($data['password'] ?? '');
 
+if (empty($email) || empty($password)) {
+    echo json_encode(["success" => false, "message" => "Please fill in all fields."]);
+    exit();
+}
+
 // --- 1. Check Admin Table ---
 $stmt = $conn->prepare("SELECT admin_id, name, password FROM tb_admin WHERE email = ?");
-$stmt->bind_param("s", $email);
-$stmt->execute();
-$res = $stmt->get_result();
-if ($user = $res->fetch_assoc()) {
-    if (password_verify($password, $user['password']) || $password === $user['password']) {
-        echo json_encode(["success" => true, "role" => "admin", "name" => $user['name'], "admin_id" => $user['admin_id']]);
-        exit;
+if ($stmt) {
+    $stmt->bind_param("s", $email);
+    $stmt->execute();
+    $res = $stmt->get_result();
+    if ($user = $res->fetch_assoc()) {
+        if (password_verify($password, $user['password']) || $password === $user['password']) {
+            echo json_encode(["success" => true, "role" => "admin", "name" => $user['name'], "admin_id" => $user['admin_id']]);
+            exit();
+        }
     }
 }
 
 // --- 2. Check Staff Table ---
 $stmt = $conn->prepare("SELECT staff_id, name, password FROM tb_staff WHERE email = ?");
-$stmt->bind_param("s", $email);
-$stmt->execute();
-$res = $stmt->get_result();
-if ($user = $res->fetch_assoc()) {
-    if (password_verify($password, $user['password']) || $password === $user['password']) {
-        echo json_encode(["success" => true, "role" => "staff", "user_type" => "staff", "name" => $user['name'], "staff_id" => $user['staff_id']]);
-        exit;
+if ($stmt) {
+    $stmt->bind_param("s", $email);
+    $stmt->execute();
+    $res = $stmt->get_result();
+    if ($user = $res->fetch_assoc()) {
+        if (password_verify($password, $user['password']) || $password === $user['password']) {
+            echo json_encode(["success" => true, "role" => "staff", "user_type" => "staff", "name" => $user['name'], "staff_id" => $user['staff_id']]);
+            exit();
+        }
     }
 }
 
@@ -72,27 +80,29 @@ if ($stmt) {
                 "name" => $user['dentist_name'], 
                 "dentist_id" => $user['dentist_id']
             ]);
-            exit;
+            exit();
         }
     }
 }
 
 // --- 4. Check Patient Table ---
 $stmt = $conn->prepare("SELECT patient_id, name, password FROM tb_patient WHERE email = ?");
-$stmt->bind_param("s", $email);
-$stmt->execute();
-$res = $stmt->get_result();
-if ($user = $res->fetch_assoc()) {
-    if (password_verify($password, $user['password']) || $password === $user['password']) {
-        echo json_encode([
-            "success" => true, 
-            "role" => "patient", 
-            "name" => $user['name'],
-            "patient_id" => $user['patient_id']
-        ]);
-        exit;
+if ($stmt) {
+    $stmt->bind_param("s", $email);
+    $stmt->execute();
+    $res = $stmt->get_result();
+    if ($user = $res->fetch_assoc()) {
+        if (password_verify($password, $user['password']) || $password === $user['password']) {
+            echo json_encode([
+                "success" => true, 
+                "role" => "patient", 
+                "name" => $user['name'],
+                "patient_id" => $user['patient_id']
+            ]);
+            exit();
+        }
     }
 }
 
 echo json_encode(["success" => false, "message" => "Invalid email or password."]);
-?>
+exit();

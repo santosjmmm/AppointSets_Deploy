@@ -76,7 +76,8 @@ const Signup = () => {
     setError('');
 
     try {
-      const response = await fetch("http://localhost/appointsets/Backend/api/signup.php", {
+      // ✅ FIXED: Connected directly to production API endpoint instead of localhost
+      const response = await fetch("https://appointsetsdeploy-production.up.railway.app/signup.php", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
@@ -112,7 +113,6 @@ const Signup = () => {
         {error && <div className="bg-red-100 text-red-600 p-3 rounded-xl mb-4 text-sm font-semibold">{error}</div>}
 
         {!isOtpSent ? (
-          /* REGULAR FORM CONTAINER INTERFACE BLOCK */
           <form onSubmit={handleRequestOtp} autoComplete="off" className="space-y-4">
             <div className="grid grid-cols-3 gap-3">
               <div className="col-span-2 text-left">
@@ -190,7 +190,6 @@ const Signup = () => {
             </button>
           </form>
         ) : (
-          /* OTP VERIFICATION VIEW PORTION */
           <form onSubmit={handleVerifyAndRegister} className="space-y-4">
             <div className="text-gray-700 text-sm mb-2">
               An email containing a 6-digit OTP code has been dispatched to <strong>{formData.email}</strong>. Enter it below to complete registration:

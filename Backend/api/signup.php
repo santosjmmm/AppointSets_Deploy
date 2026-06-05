@@ -2,34 +2,30 @@
 
 include_once 'db.php';
 
-$data = json_decode(file_get_contents("php://input"), true);
+header("Content-Type: application/json");
+
+// Read JSON input safely
+$data = json_decode(file_get_contents("php://input"), true) ?? [];
 $action = $data['action'] ?? '';
 
-// PHPMailer path resolution
-$possiblePaths = [
-    __DIR__ . '/PHPMailer/',
-    __DIR__ . '/../PHPMailer/',
-    dirname(__FILE__) . '/PHPMailer/',
-    dirname(__FILE__) . '/../PHPMailer/',
-];
+// --------------------------------------
+// PHPMailer SIMPLE RELIABLE LOADER
+// --------------------------------------
 
-$mailerPath = '';
+$mailerPath = __DIR__ . '/PHPMailer/';
 
-foreach ($possiblePaths as $path) {
-    if (file_exists($path . 'PHPMailer.php')) {
-        $mailerPath = $path;
-        break;
-    }
-}
+if (!file_exists($mailerPath . 'PHPMailer.php')) {
 
-if (empty($mailerPath)) {
     echo json_encode([
-    "current_dir" => __DIR__,
-    "root_files" => scandir("/app"),
-    "backend_exists" => is_dir("/app/Backend"),
-    "backend_files" => is_dir("/app/Backend") ? scandir("/app/Backend") : "NOT FOUND"
-]);
-exit;
+        "success" => false,
+        "message" => "PHPMailer not found",
+        "debug" => [
+            "current_dir" => __DIR__,
+            "checked_path" => $mailerPath,
+            "root_files" => scandir("/app")
+        ]
+    ]);
+    exit;
 }
 
 require_once $mailerPath . 'Exception.php';
@@ -37,7 +33,7 @@ require_once $mailerPath . 'PHPMailer.php';
 require_once $mailerPath . 'SMTP.php';
 
 use PHPMailer\PHPMailer\PHPMailer;
-use PHPMailer\PHPMailer\Exception;n;
+use PHPMailer\PHPMailer\Exception;
 
 if ($_SERVER["REQUEST_METHOD"] === "POST" && $data) {
     

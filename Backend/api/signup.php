@@ -1,22 +1,55 @@
 <?php
+// 1. Enable strict error reporting for debugging
+error_reporting(E_ALL);
+ini_set('display_errors', 1);
 
-include_once 'db.php';
-
+// 2. Set globally required security and CORS headers (Fixes the Vercel connection block)
+header("Access-Control-Allow-Origin: https://appoint-sets-deploy.vercel.app");
+header("Access-Control-Allow-Methods: POST, GET, OPTIONS, DELETE");
+header("Access-Control-Allow-Headers: Content-Type, Authorization, X-Requested-With");
+header("Access-Control-Allow-Credentials: true");
 header("Content-Type: application/json; charset=UTF-8");
 
+// 3. Instantly handle browser CORS preflight handshakes
+if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
+    http_response_code(200);
+    exit();
+}
+
+// 4. Dynamic environment mapping (Railway vs Local XAMPP)
+$host     = getenv('MYSQLHOST') ?: 'localhost';
+$user     = getenv('MYSQLUSER') ?: 'root';
+$password = getenv('MYSQLPASSWORD') ?: '';
+$database = getenv('MYSQLDATABASE') ?: 'db_appsets';
+$port     = getenv('MYSQLPORT') ?: '3306';
+
+// 5. Establish connection
+$conn = new mysqli($host, $user, $password, $database, $port);
+
+if ($conn->connect_error) {
+    echo json_encode([
+        "success" => false, 
+        "message" => "Database connection failed: " . $conn->connect_error
+    ]);
+    exit();
+}
+
+// 6. Read Request Data
 $data = json_decode(file_get_contents("php://input"), true) ?? [];
 $action = $data['action'] ?? '';
 
-// -------------------------
-// PHPMailer loader (safe)
-// -------------------------
-$mailerPath = __DIR__ . '/PHPMailer/';
-
-if (!file_exists($mailerPath . 'PHPMailer.php')) {
+// 7. PHPMailer structural check fallback for Railway /app execution
+if (file_exists(__DIR__ . '/PHPMailer/PHPMailer.php')) {
+    $mailerPath = __DIR__ . '/PHPMailer/';
+} elseif (file_exists(__DIR__ . '/../PHPMailer/PHPMailer.php')) {
+    $mailerPath = __DIR__ . '/../PHPMailer/';
+} elseif (file_exists(__DIR__ . '/Backend/PHPMailer/PHPMailer.php')) {
+    $mailerPath = __DIR__ . '/Backend/PHPMailer/';
+} else {
     echo json_encode([
         "success" => false,
-        "message" => "PHPMailer not found",
-        "debug" => $mailerPath
+        "message" => "PHPMailer missing from folder tree paths.",
+        "debug" => __DIR__
     ]);
     exit;
 }
@@ -48,7 +81,6 @@ if ($_SERVER["REQUEST_METHOD"] === "POST" && $data) {
             exit();
         }
 
-        // Validate unique target record structure matching tables cleanly
         $check = $conn->prepare("SELECT patient_id FROM tb_patient WHERE email = ?");
         $check->bind_param("s", $email);
         $check->execute();
@@ -61,11 +93,9 @@ if ($_SERVER["REQUEST_METHOD"] === "POST" && $data) {
         }
         $check->close();
 
-        // Safe randomly populated verification tracking values
         $otp = (string)rand(100000, 999999);
         $expires_at = date("Y-m-d H:i:s", strtotime("+5 minutes"));
 
-        // Flush expired historical logs matching the user target scope
         $clear = $conn->prepare("DELETE FROM tb_otp_verification WHERE email = ?");
         $clear->bind_param("s", $email);
         $clear->execute();
@@ -76,51 +106,48 @@ if ($_SERVER["REQUEST_METHOD"] === "POST" && $data) {
         $ins->execute();
         $ins->close();
 
-        // SMTP Authentication Variables
         $smtp_user = 'santosjm62904@gmail.com'; 
         $smtp_pass = 'sief nmae lsst ermn';        
-$mail = new PHPMailer(true);
+        
+        $mail = new PHPMailer(true);
 
-try {
-    $mail->isSMTP();
-    $mail->Host = 'smtp.gmail.com';
-    $mail->SMTPAuth = true;
-    $mail->Username = $smtp_user;
-    $mail->Password = $smtp_pass;
-    $mail->SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS;
-    $mail->Port = 587;
+        try {
+            $mail->isSMTP();
+            $mail->Host = 'smtp.gmail.com';
+            $mail->SMTPAuth = true;
+            $mail->Username = $smtp_user;
+            $mail->Password = $smtp_pass;
+            $mail->SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS;
+            $mail->Port = 587;
+            $mail->SMTPDebug = 0;
 
-    // ❌ REMOVE DEBUG (THIS BREAKS JSON ON RAILWAY)
-    $mail->SMTPDebug = 0;
+            $mail->setFrom($smtp_user, "C'Smiles Dental");
+            $mail->addAddress($email);
 
-    $mail->setFrom($smtp_user, "C'Smiles Dental");
-    $mail->addAddress($email);
+            $mail->isHTML(true);
+            $mail->Subject = "Verification Code";
+            $mail->Body = "
+                <div style='font-family:Arial;padding:20px'>
+                    <h2>Verification Code</h2>
+                    <h1 style='letter-spacing:5px'>{$otp}</h1>
+                </div>
+            ";
 
-    $mail->isHTML(true);
-    $mail->Subject = "Verification Code";
+            $mail->send();
+            echo json_encode([
+                "success" => true,
+                "message" => "OTP sent successfully"
+            ]);
 
-    $mail->Body = "
-        <div style='font-family:Arial;padding:20px'>
-            <h2>Verification Code</h2>
-            <h1 style='letter-spacing:5px'>{$otp}</h1>
-        </div>
-    ";
-
-    $mail->send();
-
-    echo json_encode([
-        "success" => true,
-        "message" => "OTP sent successfully"
-    ]);
-
-} catch (Exception $e) {
-    echo json_encode([
-        "success" => false,
-        "message" => "Email failed",
-        "error" => $mail->ErrorInfo
-    ]);
-}
-exit;
+        } catch (Exception $e) {
+            echo json_encode([
+                "success" => false,
+                "message" => "Email failed",
+                "error" => $mail->ErrorInfo
+            ]);
+        }
+        exit;
+    }
 
     // ==========================================
     // ACTION 2: VERIFY OTP AND COMMIT USER REGISTRATION
@@ -141,7 +168,6 @@ exit;
 
         $current_time = date("Y-m-d H:i:s");
 
-        // Scan verification matrix layers securely
         $check = $conn->prepare("SELECT id FROM tb_otp_verification WHERE email = ? AND otp_code = ? AND expires_at > ? ORDER BY id DESC LIMIT 1");
         $check->bind_param("sss", $email, $otp, $current_time);
         $check->execute();
@@ -153,14 +179,12 @@ exit;
             exit();
         }
 
-        // Encrypt the plain text string securely
         $hashed_password = password_hash($password, PASSWORD_DEFAULT);
         
         $stmt = $conn->prepare("INSERT INTO tb_patient (name, age, contact_num, address, email, password) VALUES (?, ?, ?, ?, ?, ?)");
         $stmt->bind_param("ssssss", $full_name, $age, $contact_number, $address, $email, $hashed_password);
 
         if ($stmt->execute()) {
-            // Delete code traces on complete record generation sequence
             $del = $conn->prepare("DELETE FROM tb_otp_verification WHERE email = ?");
             $del->bind_param("s", $email);
             $del->execute();

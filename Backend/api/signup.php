@@ -1,8 +1,4 @@
 <?php
-// 1. Incorporate centralized configuration metrics (Handles connections, CORS handshakes, headers)
-include 'db.php';
-
-<?php
 include_once 'db.php';
 
 // Dynamic Path Finder: Check absolute, relative, and lowercase fallback folders

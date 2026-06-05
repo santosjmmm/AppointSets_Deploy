@@ -1,6 +1,6 @@
 <?php
 // 1. Incorporate centralized configuration metrics (Handles connections, CORS handshakes, headers)
-include_once 'db.php';
+include 'db.php';
 
 <?php
 include_once 'db.php';

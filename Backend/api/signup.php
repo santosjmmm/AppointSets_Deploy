@@ -1,12 +1,17 @@
 <?php
-include 'db.php';
+// 1. Incorporate centralized configuration metrics (Handles connection, CORS, headers)
+include_once 'db.php';
 
-// Dynamic Path Finder: Check absolute, relative, and lowercase fallback folders
-if (file_exists(GLOBAL_MAILER_DIR . 'PHPMailer.php')) {
+// 2. Capture the incoming JSON string payload safely first
+$data = json_decode(file_get_contents("php://input"), true);
+$action = $data['action'] ?? '';
+
+// 3. Dynamic Path Finder: Check absolute, relative, and lowercase fallback folders
+if (defined('GLOBAL_MAILER_DIR') && file_exists(GLOBAL_MAILER_DIR . 'PHPMailer.php')) {
     define('FINAL_MAILER_PATH', GLOBAL_MAILER_DIR);
 } elseif (file_exists(__DIR__ . '/../PHPMailer/PHPMailer.php')) {
     define('FINAL_MAILER_PATH', __DIR__ . '/../PHPMailer/');
-} elseif (file_exists(__DIR__ . '/../phpmailer/PHPMailer.php')) { // Case fallback
+} elseif (file_exists(__DIR__ . '/../phpmailer/PHPMailer.php')) { 
     define('FINAL_MAILER_PATH', __DIR__ . '/../phpmailer/');
 } else {
     echo json_encode([
@@ -23,12 +28,6 @@ require_once FINAL_MAILER_PATH . 'SMTP.php';
 
 use PHPMailer\PHPMailer\PHPMailer;
 use PHPMailer\PHPMailer\Exception;
-
-// ... rest of your inquiry logic below ...
-
-// Capture the incoming JSON string payload safely
-$data = json_decode(file_get_contents("php://input"), true);
-$action = $data['action'] ?? '';
 
 if ($_SERVER["REQUEST_METHOD"] === "POST" && $data) {
     

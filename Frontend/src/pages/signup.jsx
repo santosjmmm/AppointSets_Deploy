@@ -40,26 +40,30 @@ const Signup = () => {
     setError('');
     setStatusMessage('');
 
-    try {
-      const response = await fetch("https://appointsetsdeploy-production.up.railway.app/signup.php", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          ...formData,
-          action: "send_signup_otp"
-        }),
-      });
+try {
+  const response = await fetch("https://appointsetsdeploy-production.up.railway.app/signup.php", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({
+      ...formData,
+      action: "send_signup_otp"
+    }),
+  });
 
-      const data = await response.json();
-      if (data.success) {
-        setIsOtpSent(true);
-        setStatusMessage(data.message || "Verification code has been dispatched!");
-      } else {
-        setError(data.message || "Failed to issue registration confirmation email token.");
-      }
-    } catch (err) {
-      setError("Server connection fault. Try again later.");
-    } finally {
+  const text = await response.text();
+  const data = JSON.parse(text);
+
+  if (data.success) {
+    setIsOtpSent(true);
+    setStatusMessage(data.message);
+  } else {
+    setError(data.message || "Failed");
+  }
+
+} catch (err) {
+  console.error("FULL ERROR:", err);
+  setError("Server connection failed (check console)");
+} finally {
       setLoading(false);
     }
   };

@@ -41,7 +41,7 @@ const Signup = () => {
     setStatusMessage('');
 
     try {
-      const response = await fetch("https://appointsetsdeploy-production.up.railway.app/api/signup.php", {
+      const response = await fetch("https://appointsetsdeploy-production.up.railway.app/signup.php", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
@@ -88,7 +88,7 @@ const Signup = () => {
     setError('');
 
 try {
-  const response = await fetch("https://appointsetsdeploy-production.up.railway.app/api/signup.php", {
+  const response = await fetch("https://appointsetsdeploy-production.up.railway.app/signup.php", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({

@@ -69,7 +69,7 @@ const Login = () => {
       } else {
         setError(data.message);
         // Extract seconds if the backend sends a lockout message
-        if (data.message.includes("Too many attempts")) {
+        if (data.message && data.message.includes("Too many attempts")) {
           const seconds = parseInt(data.message.match(/\d+/)?.[0]);
           if (seconds) setRemainingTime(seconds);
         }

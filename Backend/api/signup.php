@@ -6,8 +6,13 @@ include_once 'db.php';
 $data = json_decode(file_get_contents("php://input"), true);
 $action = $data['action'] ?? '';
 
-// 3. Dynamic Path Finder: Use absolute pathing to avoid Linux relative path case issues
-$absoluteMailerPath = dirname(__DIR__) . '/PHPMailer/';
+// 3. Dynamic Path Finder: Strict Fallback Chain for Production Linux Environments
+$baseDir = dirname(__DIR__);
+if (empty($baseDir) || $baseDir === '/' || $baseDir === '\\') {
+    $baseDir = __DIR__;
+}
+
+$absoluteMailerPath = rtrim($baseDir, '/\\') . '/PHPMailer/';
 
 if (defined('GLOBAL_MAILER_DIR') && file_exists(GLOBAL_MAILER_DIR . 'PHPMailer.php')) {
     define('FINAL_MAILER_PATH', GLOBAL_MAILER_DIR);
@@ -15,12 +20,14 @@ if (defined('GLOBAL_MAILER_DIR') && file_exists(GLOBAL_MAILER_DIR . 'PHPMailer.p
     define('FINAL_MAILER_PATH', $absoluteMailerPath);
 } elseif (file_exists(__DIR__ . '/../PHPMailer/PHPMailer.php')) {
     define('FINAL_MAILER_PATH', __DIR__ . '/../PHPMailer/');
+} elseif (file_exists(__DIR__ . '/PHPMailer/PHPMailer.php')) {
+    define('FINAL_MAILER_PATH', __DIR__ . '/PHPMailer/');
 } elseif (file_exists(__DIR__ . '/../phpmailer/PHPMailer.php')) { 
     define('FINAL_MAILER_PATH', __DIR__ . '/../phpmailer/');
 } else {
     echo json_encode([
         "success" => false,
-        "message" => "Critical Error: PHPMailer files not detected in system directories. Targeted path: " . $absoluteMailerPath
+        "message" => "Critical Error: PHPMailer files not detected in system directories. Tracked absolute route: " . $absoluteMailerPath . " | Current execution dir: " . __DIR__
     ]);
     exit();
 }

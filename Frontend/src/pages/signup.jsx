@@ -40,7 +40,7 @@ const Signup = () => {
     setError('');
     setStatusMessage('');
 
-ttry {
+try {
   const response = await fetch("https://appointsetsdeploy-production.up.railway.app/signup.php", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
